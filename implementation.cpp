@@ -1,8 +1,25 @@
 #include <iostream>
-#include "data.h"
+
 using namespace std;
 
-void BST::insertNode(Node*& node, int key) {
+class Node {
+public:
+    int key;
+    Node* left;
+    Node* right;
+
+    Node(int key) {
+        this->key = key;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+
+class BST {
+private:
+    Node* root;
+
+    void insertNode(Node*& node, int key) {
         if (node == NULL) {
             node = new Node(key);
             return;
@@ -14,19 +31,29 @@ void BST::insertNode(Node*& node, int key) {
             insertNode(node->right, key);
         }
     }
-    
- Node* BST::searchNode(Node* node, int key) {
- 	cout << "Search";
+
+    Node* searchNode(Node* node, int key) {
+		node = this->root;
+		while (node != NULL){
+			if (node->key == key){
+				return node;
+			} else if (node -> key < key){
+				node = node-> right;
+			} else {
+				node = node -> left;
+			}
+		}
  }
- 
- Node* BST::findMin(Node* node) {
+
+    Node* findMin(Node* node) {
         while (node->left != NULL) {
             node = node->left;
         }
+
         return node;
     }
 
- Node* BST::deleteNode(Node*& node, int key) {
+    Node* deleteNode(Node*& node, int key) {
         if (node == NULL) {
             return node;
         }
@@ -50,25 +77,35 @@ void BST::insertNode(Node*& node, int key) {
             node->key = temp->key;
             node->right = deleteNode(node->right, temp->key);
         }
+
         return node;
     }
-    
-void BST::inorderTraversal(Node* node) {
-//TODO
-	cout << "inorder";
+
+    void inorderTraversal(Node* node) {
+    	if(node){
+    		inorderTraversal(node->left);
+    		cout << node->key << " ";
+    		inorderTraversal(node->right);
+		}
     }
 
-void BST::preorderTraversal(Node* node) {
-//TODO
-	cout << "preorder";
+    void preorderTraversal(Node* node) {
+		if(node){
+			cout << node->key << " ";
+			preorderTraversal(node->left);
+			preorderTraversal(node->right);
+		}
     }
 
-void BST::postorderTraversal(Node* node) {
-//TODO
-	cout << "postorder";
+    void postorderTraversal(Node* node) {
+		if(node){
+			postorderTraversal(node->left);
+			postorderTraversal(node->right);
+			cout << node->key << " ";
+		}
     }
-    
-void BST::displayBST(Node* node, int space) {
+
+    void displayBST(Node* node, int space) {
         if (node == NULL) {
             return;
         }
@@ -84,36 +121,77 @@ void BST::displayBST(Node* node, int space) {
 
         displayBST(node->left, space);
     }
-    
-void BST::insert(int key) {
+
+public:
+    BST() {
+        this->root = NULL;
+    }
+
+    void insert(int key) {
         insertNode(this->root, key);
     }
-    
-Node* BST::search(int key) {
+
+    Node* search(int key) {
         return searchNode(this->root, key);
     }
-    
-void BST::remove(int key) {
+
+    void remove(int key) {
         deleteNode(this->root, key);
     }
-    
-void BST::inorder() {
+
+    void inorder() {
         inorderTraversal(this->root);
-	cout << endl;
+cout << endl;
 }
 
-	void BST::preorder() {
+void preorder() {
     preorderTraversal(this->root);
     cout << endl;
 }
 
-void BST::postorder() {
+void postorder() {
     postorderTraversal(this->root);
     cout << endl;
 }
 
-void BST::display() {
+void display() {
     displayBST(this->root, 0);
 }
+};
 
+int main() {
+BST bst;
+bst.insert(50);
+bst.insert(30);
+bst.insert(70);
+bst.insert(20);
+bst.insert(40);
+bst.insert(60);
+bst.insert(80);
 
+cout << "Inorder traversal: ";
+bst.inorder();
+
+cout << "Preorder traversal: ";
+bst.preorder();
+
+cout << "Postorder traversal: ";
+bst.postorder();
+
+cout << "Displaying BST:\n";
+bst.display();
+
+Node* searchedNode = bst.search(60);
+if (searchedNode == NULL) {
+    cout << "Node not found in the BST\n";
+} else {
+    cout << "Node found in the BST: " << searchedNode->key << endl;
+}
+
+bst.remove(30);
+
+cout << "Inorder traversal after deleting a node: ";
+bst.inorder();
+
+return 0;
+}
